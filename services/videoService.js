@@ -6,28 +6,29 @@ const ytdl = require('ytdl-core');
 
 const apiKey = process.env.OPENAI_API_KEY;
 
-exports.downloadVideo = async (videoUrl) => {
-  const videoId = new URL(videoUrl).searchParams.get('v');
+// exports.downloadVideo = async (videoUrl) => {
+//   const videoId = new URL(videoUrl).searchParams.get('v');
 
-  if (!videoId) {
-    throw new Error('Invalid video url');
-  }
+//   if (!videoId) {
+//     throw new Error('Invalid video url');
+//   }
 
-  const stream = ytdl(videoUrl, { quality: 'highest', format: 'mp4' });
+//   const stream = ytdl(videoUrl, { quality: 'highest', format: 'mp4' });
 
-  const writeStream = fs.createWriteStream(`./tmp/${videoId}.mp4`);
+//   const writeStream = fs.createWriteStream(`./tmp/${videoId}.mp4`);
 
-  stream.pipe(writeStream);
+//   stream.pipe(writeStream);
 
-  return new Promise((resolve, reject) => {
-    writeStream.on('finish', () => resolve(`./tmp/${videoId}.mp4`));
-    writeStream.on('error', reject);
-  });
-};
+//   return new Promise((resolve, reject) => {
+//     writeStream.on('finish', () => resolve(`./tmp/${videoId}.mp4`));
+//     writeStream.on('error', reject);
+//   });
+// };
 
-exports.transcribeVideo = async (videoPath) => {
+exports.transcribeVideo = async (videoUrl) => {
+  const stream = ytdl(videoUrl, { quality: 'highestaudio', format: 'mp4' });
   const formData = new FormData();
-  formData.append('file', fs.createReadStream(videoPath));
+  formData.append('file', stream, 'video.mp4');
   formData.append('model', 'whisper-1');
   formData.append('response_format', 'srt');
   console.log(apiKey);
