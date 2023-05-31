@@ -1,5 +1,6 @@
 // file: index.js
 const express = require('express');
+const cors = require('cors');
 const app = express();
 require('dotenv').config();
 
@@ -7,6 +8,7 @@ require('dotenv').config();
 const videoTranslateRoutes = require('./routes/videoTranslate');
 
 app.use(express.json());
+app.use(cors());
 
 // use your routes
 app.use('/api', videoTranslateRoutes);
