@@ -4,12 +4,6 @@ const FormData = require('form-data');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 
-// const { Configuration, OpenAIApi } = require('openai');
-// const configuration = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-// const openai = new OpenAIApi(configuration);
-
 const apiKey = process.env.OPENAI_API_KEY;
 
 exports.downloadVideo = async (videoUrl) => {
@@ -54,7 +48,7 @@ exports.transcribeVideo = async (videoPath) => {
     throw new Error(response.statusText);
   } else {
     const responseText = await response.text();
-    console.log(responseText);
+    // console.log(responseText);
     return responseText;
   }
 };
@@ -63,28 +57,36 @@ exports.translateTranscription = async (transcription) => {
   const prompt =
     'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
 
-  const response = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [
-      {
-        role: 'system',
-        content: prompt,
-      },
-      {
-        role: 'user',
-        content: `翻譯以下內容為繁體中文: "${transcription}"`,
-      },
-    ],
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        {
+          role: 'user',
+          content: `翻譯以下內容為繁體中文: "${transcription}"`,
+        },
+      ],
+    }),
   });
 
   if (!response.ok) {
-    console.log(response.message);
+    // console.log(response);
     throw new Error(response.message);
   } else {
-    console.log(response.data.choices[0].message);
+    // console.log(response);
     const responseJson = await response.json();
+    // console.log(responseJson);
     const ans = responseJson['choices'][0]['message']['content'];
-    console.log(ans);
+    // console.log(ans);
     return ans;
   }
 };
