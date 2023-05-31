@@ -56,7 +56,7 @@ exports.transcribeVideo = async (videoPath) => {
 exports.translateTranscription = async (transcription) => {
   const prompt =
     'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-
+  console.log(transcription);
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -72,7 +72,7 @@ exports.translateTranscription = async (transcription) => {
         },
         {
           role: 'user',
-          content: `翻譯以下內容為繁體中文: "${transcription}"`,
+          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${transcription}"`,
         },
       ],
     }),
