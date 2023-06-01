@@ -6,8 +6,13 @@ const videoService = require('../services/videoService');
 
 exports.translateVideo = async (req, res) => {
   const videoUrl = req.body.videoUrl;
+  let interval;
 
   try {
+    interval = setInterval(() => {
+      res.write('Processing...\n');
+    }, 5000);
+
     // const videoPath = await videoService.downloadVideo(videoUrl);
     // console.log('Video downloaded to: ', videoPath);
 
@@ -27,10 +32,14 @@ exports.translateVideo = async (req, res) => {
       translation: translation,
     };
 
-    res.json(data);
+    clearInterval(interval);
+    res.write(JSON.stringify(data));
+    res.end();
   } catch (error) {
     console.log(error);
+    clearInterval(interval);
 
-    res.status(500).json({ error: error.toString() });
+    res.write(JSON.stringify({ error: error.toString() }));
+    res.end();
   }
 };

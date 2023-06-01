@@ -57,7 +57,7 @@ exports.transcribeVideo = async (videoUrl) => {
 exports.translateTranscription = async (transcription) => {
   const prompt =
     'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-  console.log(transcription);
+  // console.log(transcription);
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
