@@ -5,6 +5,7 @@ const videoService = require('../services/videoService');
 // const unlinkFile = util.promisify(fs.unlink);
 
 exports.translateVideo = async (req, res) => {
+  const apiKey = req.body.apiKey;
   const videoUrl = req.body.videoUrl;
   let interval;
 
@@ -16,13 +17,16 @@ exports.translateVideo = async (req, res) => {
     // const videoPath = await videoService.downloadVideo(videoUrl);
     // console.log('Video downloaded to: ', videoPath);
 
-    const transcription = await videoService.transcribeVideo(videoUrl);
+    const transcription = await videoService.transcribeVideo(apiKey, videoUrl);
     console.log('Transcription completed!');
+    res.write('Transcription completed!\n');
 
     const translation = await videoService.translateTranscription(
+      apiKey,
       transcription
     );
     console.log('Translation completed!');
+    res.write('Translation completed!\n');
 
     // await unlinkFile(videoPath);
     // console.log('Video deleted from: ', videoPath);

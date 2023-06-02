@@ -4,8 +4,6 @@ const FormData = require('form-data');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 
-const apiKey = process.env.OPENAI_API_KEY;
-
 // exports.downloadVideo = async (videoUrl) => {
 //   const videoId = new URL(videoUrl).searchParams.get('v');
 
@@ -25,7 +23,7 @@ const apiKey = process.env.OPENAI_API_KEY;
 //   });
 // };
 
-exports.transcribeVideo = async (videoUrl) => {
+exports.transcribeVideo = async (apiKey, videoUrl) => {
   const stream = ytdl(videoUrl, { quality: 'highestaudio', format: 'mp4' });
   const formData = new FormData();
   formData.append('file', stream, 'video.mp4');
@@ -54,10 +52,11 @@ exports.transcribeVideo = async (videoUrl) => {
   }
 };
 
-exports.translateTranscription = async (transcription) => {
+exports.translateTranscription = async (apiKey, transcription) => {
   const prompt =
     'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
   // console.log(transcription);
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
