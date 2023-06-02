@@ -1,8 +1,8 @@
 // file: services/videoService.js
 const fetch = require('node-fetch');
 const FormData = require('form-data');
-const fs = require('fs');
 const ytdl = require('ytdl-core');
+const { OpenAIApi, Configuration } = require('openai');
 
 // exports.downloadVideo = async (videoUrl) => {
 //   const videoId = new URL(videoUrl).searchParams.get('v');
@@ -24,12 +24,12 @@ const ytdl = require('ytdl-core');
 // };
 
 exports.transcribeVideo = async (apiKey, videoUrl) => {
+  // console.log(apiKey);
   const stream = ytdl(videoUrl, { quality: 'highestaudio', format: 'mp4' });
   const formData = new FormData();
   formData.append('file', stream, 'video.mp4');
   formData.append('model', 'whisper-1');
   formData.append('response_format', 'srt');
-  console.log(apiKey);
 
   const response = await fetch(
     'https://api.openai.com/v1/audio/transcriptions',
@@ -42,51 +42,41 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
     }
   );
 
-  if (!response.ok) {
-    console.log(response.statusText);
-    throw new Error(response.statusText);
-  } else {
-    const responseText = await response.text();
-    // console.log(responseText);
-    return responseText;
-  }
+  const responseText = await response.text();
+  // console.log(responseText);
+  return responseText;
 };
 
 exports.translateTranscription = async (apiKey, transcription) => {
   const prompt =
     'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
   // console.log(transcription);
+  // const test =
+  //   '1\n00:00:00,000 --> 00:00:05,280\nAstro, a tool for building static websites with your favorite JavaScript frameworks,\n\n2\n00:00:05,280 --> 00:00:08,040\nwhile shipping zero JavaScript to the browser.\n\n';
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${transcription}"`,
-        },
-      ],
-    }),
+  const configuration = new Configuration({ apiKey: apiKey });
+  const openai = new OpenAIApi(configuration);
+
+  const response = await openai.createChatCompletion({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      {
+        role: 'system',
+        content: prompt,
+      },
+      {
+        role: 'user',
+        content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${JSON.stringify(
+          transcription
+          // test
+        )}"`,
+      },
+    ],
   });
 
-  if (!response.ok) {
-    // console.log(response);
-    throw new Error(response.message);
-  } else {
-    // console.log(response);
-    const responseJson = await response.json();
-    // console.log(responseJson);
-    const ans = responseJson['choices'][0]['message']['content'];
-    // console.log(ans);
-    return ans;
-  }
+  const { data } = response;
+  console.log('Data: ', data);
+  console.log(data.choices[0].message);
+
+  return data.choices[0].message.content;
 };
