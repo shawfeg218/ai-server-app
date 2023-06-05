@@ -46,3 +46,7 @@ jspm_packages/
 
 # Next.js build output
 .next
+
+
+# google text-to-speech
+esp32-webapp-382008-0ad25a0baf41.json

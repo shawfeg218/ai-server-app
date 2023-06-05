@@ -2,6 +2,10 @@
 
 const fetch = require('node-fetch');
 const { OpenAIApi, Configuration } = require('openai');
+const textToSpeech = require('@google-cloud/text-to-speech');
+const speechClient = new textToSpeech.TextToSpeechClient({
+  keyFilename: './esp32-webapp-382008-0ad25a0baf41.json',
+});
 const openaiKey = process.env.OPENAI_API_KEY;
 
 exports.transcribeQustion = async (questionStream) => {
@@ -63,21 +67,30 @@ exports.chat = async (transcription) => {
 };
 
 exports.textToSpeech = async (answer) => {
-  {
-  "audioConfig": {
-    "audioEncoding": "LINEAR16",
-    "effectsProfileId": [
-      "small-bluetooth-speaker-class-device"
-    ],
-    "pitch": 0,
-    "speakingRate": 1
-  },
-  "input": {
-    "text": "你好嗎? 我是你的語音助理"
-  },
-  "voice": {
-    "languageCode": "cmn-TW",
-    "name": "cmn-TW-Standard-A"
+  const text = `${answer}`;
+  try {
+    const response = await speechClient.synthesizeSpeech({
+      audioConfig: {
+        audioEncoding: 'MP3',
+        effectsProfileId: ['small-bluetooth-speaker-class-device'],
+        pitch: 0,
+        speakingRate: 1,
+      },
+      input: {
+        text: text,
+      },
+      voice: {
+        languageCode: 'cmn-TW',
+        name: 'cmn-TW-Standard-C',
+      },
+    });
+
+    const audioContent = response[0].audioContent;
+    const audioContentBase64 = audioContent.toString('base64');
+
+    return audioContentBase64;
+  } catch (error) {
+    console.log('Error in textToSpeech:', error);
+    throw error;
   }
-}
 };
