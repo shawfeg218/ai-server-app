@@ -23,9 +23,9 @@ const { OpenAIApi, Configuration } = require('openai');
 //       writeStream.on('error', reject);
 //     });
 //   } catch (error) {
-//     // 处理错误
+
 //     console.error('Error in downloadVideo:', error);
-//     throw error; // 可选择抛出错误，使调用者能够处理异常情况
+//     throw error;
 //   }
 // };
 
@@ -37,23 +37,19 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'srt');
 
-    const response = await fetch(
-      'https://api.openai.com/v1/audio/transcriptions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: formData,
-      }
-    );
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: formData,
+    });
 
     const responseText = await response.text();
     return responseText;
   } catch (error) {
-    // 处理错误
     console.error('Error in transcribeVideo:', error);
-    throw error; // 可选择抛出错误，使调用者能够处理异常情况
+    throw error;
   }
 };
 
@@ -86,8 +82,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
     return data.choices[0].message.content;
   } catch (error) {
-    // 处理错误
     console.error('Error in translateTranscription:', error);
-    throw error; // 可选择抛出错误，使调用者能够处理异常情况
+    throw error;
   }
 };
