@@ -10,23 +10,23 @@ exports.translateVideo = async (req, res) => {
   let interval;
 
   try {
-    interval = setInterval(() => {
-      res.write('Processing...\n');
-    }, 5000);
+    // interval = setInterval(() => {
+    //   res.write('Processing...\n');
+    // }, 5000);
 
     // const videoPath = await videoService.downloadVideo(videoUrl);
     // console.log('Video downloaded to: ', videoPath);
 
     const transcription = await videoService.transcribeVideo(apiKey, videoUrl);
     console.log('Transcription completed!');
-    res.write('Transcription completed!\n');
+    // res.write('Transcription completed!\n');
 
     const translation = await videoService.translateTranscription(
       apiKey,
       transcription
     );
     console.log('Translation completed!');
-    res.write('Translation completed!\n');
+    // res.write('Translation completed!\n');
 
     // await unlinkFile(videoPath);
     // console.log('Video deleted from: ', videoPath);
@@ -36,14 +36,12 @@ exports.translateVideo = async (req, res) => {
       translation: translation,
     };
 
-    clearInterval(interval);
-    res.write(JSON.stringify(data));
-    res.end();
+    // clearInterval(interval);
+    res.json(data);
   } catch (error) {
     console.log(error);
-    clearInterval(interval);
+    // clearInterval(interval);
 
-    res.write(JSON.stringify({ error: error.toString() }));
-    res.end();
+    res.status(500).json({ error: error.toString() });
   }
 };
