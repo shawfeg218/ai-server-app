@@ -31,9 +31,9 @@ const { OpenAIApi, Configuration } = require('openai');
 
 exports.transcribeVideo = async (apiKey, videoUrl) => {
   try {
-    const stream = ytdl(videoUrl, { quality: 'highestaudio', format: 'mp4' });
+    const stream = ytdl(videoUrl, { quality: 'lowestaudio', format: 'mp4' });
     const formData = new FormData();
-    formData.append('file', stream, 'video.mp4');
+    formData.append('file', stream, 'audio.mp4');
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'srt');
 
