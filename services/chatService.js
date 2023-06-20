@@ -24,7 +24,7 @@ exports.chat = async (question) => {
         },
         {
           role: 'user',
-          content: `${JSON.stringify(question)}`,
+          content: `你將成為一個出色的聊天機器人，能夠判斷情境並對孩子的問題給出最合適的答案，請以繁體中文回答以下的問題: "${question}"`,
         },
       ],
     });
