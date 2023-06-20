@@ -69,9 +69,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
         },
         {
           role: 'user',
-          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${JSON.stringify(
-            transcription
-          )}"`,
+          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${transcription}"`,
         },
       ],
     });
