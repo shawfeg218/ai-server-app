@@ -2,20 +2,16 @@
 const chatService = require('../services/chatService');
 
 exports.audioChat = async (req, res) => {
-  const questionStream = req.body.questionStream;
+  const question = req.body.question;
 
   try {
-    const transcription = await chatService.transcribeQustion(questionStream);
-    console.log('Transcription completed!');
-
-    const answer = await chatService.chat(transcription);
+    const answer = await chatService.chat(question);
     console.log('Answer completed!');
 
-    const answerAudio = await chatService.textToSpeech();
+    const answerAudio = await chatService.textToSpeech(answer);
     console.log('Answer audio completed!');
 
     const data = {
-      transcription: transcription,
       answer: answer,
       answerAudio: answerAudio,
     };

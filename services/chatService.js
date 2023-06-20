@@ -1,6 +1,5 @@
 // file: services\audioChatService.js
 
-const fetch = require('node-fetch');
 const { OpenAIApi, Configuration } = require('openai');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speechClient = new textToSpeech.TextToSpeechClient({
@@ -8,33 +7,8 @@ const speechClient = new textToSpeech.TextToSpeechClient({
 });
 const openaiKey = process.env.OPENAI_API_KEY;
 
-exports.transcribeQustion = async (questionStream) => {
-  console.log(openaiKey);
-  try {
-    const stream = questionStream;
-    const formData = new FormData();
-    formData.append('file', stream, 'audio.mp3');
-    formData.append('model', 'whisper-1');
-    formData.append('response_format', 'json');
-
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${openaiKey}`,
-      },
-      body: formData,
-    });
-
-    const responseText = await response.text();
-    return responseText;
-  } catch (error) {
-    console.error('Error in transcribeVideo:', error);
-    throw error;
-  }
-};
-
-exports.chat = async (transcription) => {
-  console.log(openaiKey);
+exports.chat = async (question) => {
+  // console.log(openaiKey);
   try {
     const prompt =
       'You are going to be a good chatbot, capable of judging the situation to derive the most suitable answer to the question asked by the child.';
@@ -50,14 +24,14 @@ exports.chat = async (transcription) => {
         },
         {
           role: 'user',
-          content: `${JSON.stringify(transcription)}`,
+          content: `${JSON.stringify(question)}`,
         },
       ],
     });
 
     const { data } = response;
-    console.log('Data: ', data);
-    console.log(data.choices[0].message);
+    // console.log('Data: ', data);
+    // console.log(data.choices[0].message);
 
     return data.choices[0].message.content;
   } catch (error) {
