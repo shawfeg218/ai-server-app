@@ -30,11 +30,6 @@ exports.translateVideo = async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
-      message: error.message,
-      type: error.type,
-      param: error.param,
-      code: error.code,
-    });
+    res.status(500).json({ error });
   }
 };
