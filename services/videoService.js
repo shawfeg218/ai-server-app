@@ -45,13 +45,8 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
       body: formData,
     });
 
-    if (!response.ok) {
-      const { error } = await response.json();
-      throw new Error(error);
-    } else {
-      const responseText = await response.text();
-      return responseText;
-    }
+    const responseText = await response.text();
+    return responseText;
   } catch (error) {
     console.error('Error in transcribeVideo:', error);
     throw error;
@@ -74,23 +69,16 @@ exports.translateTranscription = async (apiKey, transcription) => {
         },
         {
           role: 'user',
-          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${JSON.stringify(
-            transcription
-          )}"`,
+          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${transcription}"`,
         },
       ],
     });
 
-    if (!response.ok) {
-      const { error } = await response.json();
-      throw new Error(error);
-    } else {
-      const { data } = response;
-      console.log('Data: ', data);
-      console.log(data.choices[0].message);
+    const { data } = response;
+    // console.log('Data: ', data);
+    // console.log(data.choices[0].message);
 
-      return data.choices[0].message.content;
-    }
+    return data.choices[0].message.content;
   } catch (error) {
     console.error('Error in translateTranscription:', error);
     throw error;
