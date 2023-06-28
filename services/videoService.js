@@ -54,8 +54,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-    const sentencesFor16k = 200;
-    const sentencesPerRequest = 80;
+    const sentencesFor16k = 150;
+    const sentencesPerRequest = 40;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
