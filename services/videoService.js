@@ -35,17 +35,17 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
     });
 
     if (!response.ok) {
-      const errorResponse = await response.json();
+      const { error } = await response.json();
       throw {
         name: 'Whisper APIError',
-        message: errorResponse.error.message,
+        message: error?.message || 'Unknown error',
       };
     }
 
     const responseText = await response.text();
     return responseText;
   } catch (error) {
-    console.error('Error in transcribeVideo:', error);
+    // console.error('Error in transcribeVideo:', error);
     throw error;
   }
 };
@@ -54,7 +54,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-    const sentencesFor16k = 300;
+    const sentencesFor16k = 200;
     const sentencesPerRequest = 80;
     let result = '';
 
@@ -100,7 +100,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
         const { data } = response;
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
-        console.log(data.usage);
+
+        // console.log(data.usage);
 
         result += data.choices[0].message.content;
       }
@@ -143,17 +144,24 @@ exports.translateTranscription = async (apiKey, transcription) => {
         const { data } = response;
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
-        console.log(data.usage);
+
+        // console.log(data.usage);
 
         result += data.choices[0].message.content;
       }
     }
     return (result += '\n\n\n');
   } catch (error) {
-    console.error('Error in translateTranscription:', error);
-    throw {
-      name: 'TranslationError',
-      message: error.message,
-    };
+    if (error.response) {
+      throw {
+        name: 'APIError',
+        message: error.response.data.error.message,
+      };
+    } else {
+      throw {
+        name: 'UnknownError',
+        message: error.message,
+      };
+    }
   }
 };

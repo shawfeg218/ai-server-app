@@ -35,8 +35,17 @@ exports.chat = async (question) => {
 
     return data.choices[0].message.content;
   } catch (error) {
-    console.log('Error in chat:', error);
-    throw error;
+    if (error.response) {
+      throw {
+        name: 'APIError',
+        message: error.response.data.error.message,
+      };
+    } else {
+      throw {
+        name: 'UnknownError',
+        message: error.message,
+      };
+    }
   }
 };
 

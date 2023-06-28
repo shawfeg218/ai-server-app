@@ -18,7 +18,12 @@ exports.audioChat = async (req, res) => {
 
     res.json(data);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.toString() });
+    // console.log(error);
+    const errorResponse = {
+      name: error.name,
+      message: error.message,
+    };
+
+    res.status(500).json(errorResponse);
   }
 };
