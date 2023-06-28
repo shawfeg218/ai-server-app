@@ -54,28 +54,56 @@ exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
+    const sentencesPerRequest = 85;
+    let result = '';
+
     const configuration = new Configuration({ apiKey: apiKey });
     const openai = new OpenAIApi(configuration);
 
-    const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo-16k',
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${transcription}"`,
-        },
-      ],
-    });
+    const transcriptionArray = transcription.split('\n\n');
+    const contentArray = [];
+    let item = '';
+    let index = 0;
 
-    const { data } = response;
-    // console.log('Data: ', data);
-    // console.log(data.choices[0].message);
+    for (let i = 0; i < transcriptionArray.length; i++) {
+      item += transcriptionArray[i] + '\n\n';
+      index++;
 
-    return data.choices[0].message.content;
+      if (index === sentencesPerRequest) {
+        contentArray.push(item);
+        item = '';
+        index = 0;
+      }
+    }
+
+    if (item !== '') {
+      contentArray.push(item);
+    }
+
+    for (let item of contentArray) {
+      const response = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo-16k',
+        messages: [
+          {
+            role: 'system',
+            content: prompt,
+          },
+          {
+            role: 'user',
+            content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${item}"`,
+          },
+        ],
+      });
+
+      const { data } = response;
+      // console.log('Data: ', data);
+      // console.log(data.choices[0].message);
+      console.log(data.usage);
+
+      result += data.choices[0].message.content;
+    }
+
+    return (result += '\n\n\n');
   } catch (error) {
     console.error('Error in translateTranscription:', error);
     throw {
