@@ -4,34 +4,23 @@ const FormData = require('form-data');
 const ytdl = require('ytdl-core');
 const { OpenAIApi, Configuration } = require('openai');
 
-// exports.downloadVideo = async (videoUrl) => {
-//   try {
-//     const videoId = new URL(videoUrl).searchParams.get('v');
-
-//     if (!videoId) {
-//       throw new Error('Invalid video url');
-//     }
-
-//     const stream = ytdl(videoUrl, { quality: 'highest', format: 'mp4' });
-
-//     const writeStream = fs.createWriteStream(`./tmp/${videoId}.mp4`);
-
-//     stream.pipe(writeStream);
-
-//     return new Promise((resolve, reject) => {
-//       writeStream.on('finish', () => resolve(`./tmp/${videoId}.mp4`));
-//       writeStream.on('error', reject);
-//     });
-//   } catch (error) {
-
-//     console.error('Error in downloadVideo:', error);
-//     throw error;
-//   }
-// };
-
 exports.transcribeVideo = async (apiKey, videoUrl) => {
   try {
+    if (!ytdl.validateURL(videoUrl)) {
+      throw new Error('Invalid video URL');
+    }
+    // download audio from youtube
     const stream = ytdl(videoUrl, { quality: 'lowestaudio', format: 'mp4' });
+
+    // Check audio size
+    let audioSizeMB = 0;
+    stream.on('data', (chunk) => {
+      audioSizeMB += chunk.length / (1024 * 1024);
+      if (audioSizeMB > 24.5) {
+        stream.destroy(new Error('Audio size exceeds 25MB limit'));
+      }
+    });
+
     const formData = new FormData();
     formData.append('file', stream, 'audio.mp4');
     formData.append('model', 'whisper-1');
@@ -44,6 +33,14 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
       },
       body: formData,
     });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw {
+        name: 'Whisper APIError',
+        message: errorResponse.error.message,
+      };
+    }
 
     const responseText = await response.text();
     return responseText;
@@ -81,6 +78,9 @@ exports.translateTranscription = async (apiKey, transcription) => {
     return data.choices[0].message.content;
   } catch (error) {
     console.error('Error in translateTranscription:', error);
-    throw error;
+    throw {
+      name: 'TranslationError',
+      message: error.message,
+    };
   }
 };
