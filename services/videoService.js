@@ -73,7 +73,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         if (index === sentencesFor16k) {
           contentArray.push(item);
-          item = '\n\n';
+          item = '';
           index = 0;
         }
       }
@@ -104,6 +104,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
         console.log('gpt-3.5-turbo-16k', data.usage);
 
         result += data.choices[0].message.content;
+        result += '\n\n';
       }
     } else {
       const transcriptionArray = transcription.split('\n\n');
@@ -117,7 +118,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         if (index === sentencesPerRequest) {
           contentArray.push(item);
-          item = '\n\n';
+          item = '';
           index = 0;
         }
       }
@@ -148,9 +149,10 @@ exports.translateTranscription = async (apiKey, transcription) => {
         console.log('gpt-3.5-turbo: ', data.usage);
 
         result += data.choices[0].message.content;
+        result += '\n\n'
       }
     }
-    return (result += '\n\n\n');
+    return (result += '\n');
   } catch (error) {
     if (error.response) {
       throw {
