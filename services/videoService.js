@@ -54,8 +54,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-    const sentencesFor16k = 100;
-    const sentencesPerRequest = 20;
+    const sentencesFor16k = 200;
+    const sentencesPerRequest = 50;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
@@ -73,7 +73,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         if (index === sentencesFor16k) {
           contentArray.push(item);
-          item = '';
+          item = '\n\n';
           index = 0;
         }
       }
@@ -101,7 +101,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
 
-        console.log(data.usage);
+        console.log('gpt-3.5-turbo-16k', data.usage);
 
         result += data.choices[0].message.content;
       }
@@ -117,7 +117,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         if (index === sentencesPerRequest) {
           contentArray.push(item);
-          item = '';
+          item = '\n\n';
           index = 0;
         }
       }
@@ -145,7 +145,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
 
-        // console.log(data.usage);
+        console.log('gpt-3.5-turbo: ', data.usage);
 
         result += data.choices[0].message.content;
       }
