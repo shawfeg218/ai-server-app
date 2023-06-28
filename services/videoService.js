@@ -54,8 +54,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-    const sentencesFor16k = 150;
-    const sentencesPerRequest = 40;
+    const sentencesFor16k = 100;
+    const sentencesPerRequest = 20;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
@@ -101,7 +101,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
 
-        // console.log(data.usage);
+        console.log(data.usage);
 
         result += data.choices[0].message.content;
       }
