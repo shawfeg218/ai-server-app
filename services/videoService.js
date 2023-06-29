@@ -55,13 +55,12 @@ exports.translateTranscription = async (apiKey, transcription) => {
     const prompt =
       'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
     const sentencesFor16k = 220;
-    const sentencesPerRequest = 60;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
     const openai = new OpenAIApi(configuration);
 
-    if (transcription.length > 15000) {
+    if (transcription.length > 1850) {
       const transcriptionArray = transcription.split('\n\n');
       const contentArray = [];
       let item = '';
@@ -92,11 +91,10 @@ exports.translateTranscription = async (apiKey, transcription) => {
             },
             {
               role: 'user',
-              content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${item}"`,
+              content: `翻譯以下內容為繁體中文，若已經是繁體中文就不用翻譯。請保留所有換行符號、句子的編號與時間的標示: "${item}"`,
             },
           ],
         });
-
         const { data } = response;
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
@@ -107,50 +105,28 @@ exports.translateTranscription = async (apiKey, transcription) => {
         result += '\n\n';
       }
     } else {
-      const transcriptionArray = transcription.split('\n\n');
-      const contentArray = [];
-      let item = '';
-      let index = 0;
+      const response = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: prompt,
+          },
+          {
+            role: 'user',
+            content: `翻譯以下內容為繁體中文，若已經是繁體中文就不用翻譯。請保留所有換行符號、句子的編號與時間的標示: "${transcription}"`,
+          },
+        ],
+      });
 
-      for (let i = 0; i < transcriptionArray.length; i++) {
-        item += transcriptionArray[i] + '\n\n';
-        index++;
+      const { data } = response;
+      // console.log('Data: ', data);
+      // console.log(data.choices[0].message);
 
-        if (index === sentencesPerRequest) {
-          contentArray.push(item);
-          item = '';
-          index = 0;
-        }
-      }
+      console.log('gpt-3.5-turbo: ', data.usage);
 
-      if (item !== '') {
-        contentArray.push(item);
-      }
-
-      for (let item of contentArray) {
-        const response = await openai.createChatCompletion({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: prompt,
-            },
-            {
-              role: 'user',
-              content: `翻譯以下內容為繁體中文，但請保留句子的編號與時間的標示: "${item}"`,
-            },
-          ],
-        });
-
-        const { data } = response;
-        // console.log('Data: ', data);
-        // console.log(data.choices[0].message);
-
-        console.log('gpt-3.5-turbo: ', data.usage);
-
-        result += data.choices[0].message.content;
-        result += '\n\n'
-      }
+      result += data.choices[0].message.content;
+      result += '\n\n';
     }
     return (result += '\n');
   } catch (error) {
