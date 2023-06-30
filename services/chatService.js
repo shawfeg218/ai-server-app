@@ -3,7 +3,7 @@
 const { OpenAIApi, Configuration } = require('openai');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speechClient = new textToSpeech.TextToSpeechClient({
-  keyFilename: './esp32-webapp-382008-0ad25a0baf41.json',
+  keyFilename: './meme-bot-391406-47b18ce0fb21.json',
 });
 const openaiKey = process.env.OPENAI_API_KEY;
 
