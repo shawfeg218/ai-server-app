@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 const ytdl = require('ytdl-core');
 const { OpenAIApi, Configuration } = require('openai');
-const { getContents } = require('../utils/getContents');
+const { getContents, delMarks } = require('../utils/getContents');
 
 exports.transcribeVideo = async (apiKey, videoUrl) => {
   try {
@@ -92,7 +92,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
             },
             {
               role: 'user',
-              content: `請將[START]到[END]標記中每一句翻譯為繁體中文，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號但捨棄START與END標記: [START]${item}[END]`,
+              content: `請將[START]與[END]標記中的內容為繁體中文，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
             },
           ],
         });
@@ -102,7 +102,9 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         console.log('gpt-3.5-turbo-16k', data.usage);
 
-        result += data.choices[0].message.content + '\n\n';
+        const contentDM = delMarks(data.choices[0].message.content);
+
+        result += contentDM;
       }
     } else {
       const transcriptionArray = getContents(transcription);
@@ -121,7 +123,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
           },
           {
             role: 'user',
-            content: `請將[START]到[END]標記中每一句翻譯為繁體中文，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號但捨棄START與END標記: [START]${item}[END]`,
+            content: `請將[START]標記與[END]標記中的內容翻譯為繁體中文，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
           },
         ],
       });
@@ -132,9 +134,10 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
       console.log('gpt-3.5-turbo: ', data.usage);
 
-      result += data.choices[0].message.content + '\n\n';
+      const contentDM = delMarks(data.choices[0].message.content);
+      result += contentDM;
     }
-    return result + '\n';
+    return result + '\n\n';
   } catch (error) {
     if (error.response) {
       throw {
