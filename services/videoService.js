@@ -92,7 +92,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
             },
             {
               role: 'user',
-              content: `請將[START]與[END]標記中的內容翻譯為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
+              content: `請翻譯[START]與[END]標記中的內容為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
             },
           ],
         });
@@ -127,7 +127,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
           },
           {
             role: 'user',
-            content: `請將[START]與[END]標記中的內容翻譯為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
+            content: `請翻譯[START]與[END]標記中的內容為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
           },
         ],
       });
