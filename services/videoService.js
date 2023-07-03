@@ -161,7 +161,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
 exports.contentChat = async (apiKey, content) => {
   try {
     const prompt =
-      '你是一個幫助學習語言的教師。當給你任何語言的內容時，你將會提取出幾個該語言常用的詞語或句型，然後以繁體中文生成教學內容。';
+      '你是一個幫助學習語言的教師。當給你任何語言的內容時，你將會在內容中找出常用的詞語或句型，然後以繁體中文生成教學內容。';
 
     const configuration = new Configuration({ apiKey: apiKey });
     const openai = new OpenAIApi(configuration);
@@ -175,7 +175,7 @@ exports.contentChat = async (apiKey, content) => {
         },
         {
           role: 'user',
-          content: content,
+          content: `請你根據以下內容教我一些該語言常用的詞語或句型: "${content}"`,
         },
       ],
     });
