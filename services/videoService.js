@@ -157,3 +157,45 @@ exports.translateTranscription = async (apiKey, transcription) => {
     }
   }
 };
+
+exports.contentChat = async (apiKey, content) => {
+  try {
+    const prompt =
+      '你是一個幫助學習語言的教師。當給你任何語言的內容時，你將會提取出幾個該語言常用的詞語或句型，然後以繁體中文生成教學內容。';
+
+    const configuration = new Configuration({ apiKey: apiKey });
+    const openai = new OpenAIApi(configuration);
+
+    const response = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo-16k',
+      messages: [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        {
+          role: 'user',
+          content: content,
+        },
+      ],
+    });
+
+    const { data } = response;
+    // console.log('Data: ', data);
+    // console.log(data.choices[0].message);
+    console.log('gpt-3.5-turbo: ', data.usage);
+    return data.choices[0].message.content;
+  } catch (error) {
+    if (error.response) {
+      throw {
+        name: 'APIError',
+        message: error.response.data.error.message,
+      };
+    } else {
+      throw {
+        name: 'UnknownError',
+        message: error.message,
+      };
+    }
+  }
+};
