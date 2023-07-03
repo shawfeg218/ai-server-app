@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 const ytdl = require('ytdl-core');
 const { OpenAIApi, Configuration } = require('openai');
-const { getContents, delMarks } = require('../utils/getContents');
+const { getContents, delMarks, checkRes } = require('../utils/getContents');
 
 exports.transcribeVideo = async (apiKey, videoUrl) => {
   try {
@@ -102,7 +102,11 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
         console.log('gpt-3.5-turbo-16k', data.usage);
 
-        const contentDM = delMarks(data.choices[0].message.content);
+        let contentDM = delMarks(data.choices[0].message.content);
+
+        if (!contentDM.endsWith('\n\n')) {
+          contentDM += '\n\n';
+        }
 
         result += contentDM;
       }
@@ -137,7 +141,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
       const contentDM = delMarks(data.choices[0].message.content);
       result += contentDM;
     }
-    return result + '\n\n';
+
+    return checkRes(result);
   } catch (error) {
     if (error.response) {
       throw {

@@ -32,3 +32,33 @@ exports.delMarks = (content) => {
     throw error;
   }
 };
+
+exports.checkRes = (result) => {
+  try {
+    let resultArray = result.split('\n\n').filter((item) => item.trim() !== '');
+
+    // remove all characters include newlines before the first digit
+    resultArray = resultArray.map((item) => {
+      if (!/^\d/.test(item)) {
+        return item.replace(/^\s*[^\d]*(\d.*)$/, '$1');
+      } else {
+        return item;
+      }
+    });
+    result = resultArray.join('\n\n');
+
+    //modify the end of the string
+    if (result.endsWith('\n\n\n')) {
+      return result;
+    } else if (result.endsWith('\n\n')) {
+      return result + '\n';
+    } else if (result.endsWith('\n')) {
+      return result + '\n\n';
+    } else {
+      return result + '\n\n\n';
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
