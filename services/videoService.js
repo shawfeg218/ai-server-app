@@ -92,7 +92,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
             },
             {
               role: 'user',
-              content: `請將[START]與[END]標記中的內容根據前後文翻譯為合適的繁體中文，若已經是繁體中文就不用翻譯，最後的翻譯結果請保留所有編號與換行符號: [START]${item}[END]`,
+              content: `請將[START]與[END]標記中的內容翻譯為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
             },
           ],
         });
@@ -127,7 +127,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
           },
           {
             role: 'user',
-            content: `請將[START]與[END]標記中的內容根據前後文翻譯為合適的繁體中文，若已經是繁體中文就不用翻譯，最後的翻譯結果請保留所有編號與換行符號: [START]${item}[END]`,
+            content: `請將[START]與[END]標記中的內容翻譯為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
           },
         ],
       });
@@ -167,7 +167,7 @@ exports.contentChat = async (apiKey, content) => {
     const openai = new OpenAIApi(configuration);
 
     const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo-16k',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -175,7 +175,7 @@ exports.contentChat = async (apiKey, content) => {
         },
         {
           role: 'user',
-          content: `請你根據以下內容教我一些該語言常用的詞語或句型: "${content}"`,
+          content: `請你從以下內容中找出10個該語言常用詞語: "${content}"`,
         },
       ],
     });
