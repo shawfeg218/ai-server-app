@@ -2,10 +2,10 @@
 const chatService = require('../services/chatService');
 
 exports.audioChat = async (req, res) => {
-  const question = req.body.question;
+  const messages = req.body.messages;
 
   try {
-    const answer = await chatService.chat(question);
+    const answer = await chatService.chat(messages);
     console.log('Answer completed!');
 
     const answerAudio = await chatService.textToSpeech(answer);

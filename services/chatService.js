@@ -7,11 +7,11 @@ const speechClient = new textToSpeech.TextToSpeechClient({
 });
 const openaiKey = process.env.OPENAI_API_KEY;
 
-exports.chat = async (question) => {
+exports.chat = async (messages) => {
   // console.log(openaiKey);
   try {
     const prompt =
-      'You are going to be a good chatbot, capable of judging the situation to derive the most suitable answer to the question asked by the child.';
+      '你將成為一個出色的聊天機器人，能夠判斷情境並對孩子的問題給出最合適的答案，請以繁體中文回答以下的問題';
     const configuration = new Configuration({ apiKey: openaiKey });
     const openai = new OpenAIApi(configuration);
 
@@ -22,10 +22,7 @@ exports.chat = async (question) => {
           role: 'system',
           content: prompt,
         },
-        {
-          role: 'user',
-          content: `你將成為一個出色的聊天機器人，能夠判斷情境並對孩子的問題給出最合適的答案，請以繁體中文回答以下的問題: "${question}"`,
-        },
+        ...messages,
       ],
     });
 
