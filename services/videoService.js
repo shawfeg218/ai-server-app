@@ -54,8 +54,9 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
 exports.translateTranscription = async (apiKey, transcription) => {
   try {
     const prompt =
-      'You are going to be a good translator, capable of judging the situation to derive the most suitable meaning, and translating it into traditional Chinese.';
-    const sentencesFor16k = 300;
+      "You are a highly skilled translator specializing in subtitle translation. Your task is to translate the subtitle content between the [START] and [END] markers into traditional Chinese. Each subtitle, marked by its own number and separated by line breaks, should be translated individually. Do not combine or merge subtitles. For example, '1\nHello!\n\n2\nHow can I help you?\n\n' should be translated as '1\n你好!\n\n2\n我能如何幫你?\n\n'. It should not be translated as '1\n你好!我能如何幫你?\n\n'. Please retain all the numbers of the subtitles and all the line break symbols, maintaining the original format of the text.";
+
+    const sentencesFor16k = 250;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
@@ -92,7 +93,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
             },
             {
               role: 'user',
-              content: `請翻譯[START]與[END]標記中的內容為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
+              content: `[START]${item}[END]`,
             },
           ],
         });
@@ -127,7 +128,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
           },
           {
             role: 'user',
-            content: `請翻譯[START]與[END]標記中的內容為繁體中文，內容有幾句就翻譯幾句，若已經是繁體中文就不用翻譯，請保留所有編號與換行符號: [START]${item}[END]`,
+            content: `[START]${item}[END]`,
           },
         ],
       });
