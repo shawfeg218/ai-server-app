@@ -28,6 +28,18 @@ module.exports.setAxisAngle = (req, res) => {
     res.status(500).send(`Error in setAxisAngle: ${errorMessage}`);
   }
 };
+module.exports.TsetAxisAngle = (req, res) => {
+  try {
+    const angles = req.body.targetAngles;
+    console.log(`set all to ${angles}`);
+
+    mqttClient.publish(`esp32/Teacher/control/set-axis-angle`, JSON.stringify(angles));
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in setAxisAngle: ${errorMessage}`);
+  }
+};
 
 module.exports.correctAct = (req, res) => {
   try {
@@ -35,6 +47,17 @@ module.exports.correctAct = (req, res) => {
     // console.log('correctAct, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/correct-act`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in correctAct: ${errorMessage}`);
+  }
+};
+module.exports.TcorrectAct = (req, res) => {
+  try {
+    console.log('All correctAct');
+
+    mqttClient.publish(`esp32/Teacher/control/correct-act`, '');
     res.status(204).send();
   } catch (error) {
     let errorMessage = error.message ? error.message : 'An unknown error occurred';
@@ -54,6 +77,17 @@ module.exports.wrongAct = (req, res) => {
     res.status(500).send(`Error in wrongAct: ${errorMessage}`);
   }
 };
+module.exports.TwrongAct = (req, res) => {
+  try {
+    console.log('All wrongAct');
+
+    mqttClient.publish(`esp32/Teacher/control/wrong-act`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in wrongAct: ${errorMessage}`);
+  }
+};
 
 module.exports.grabAct = (req, res) => {
   try {
@@ -67,11 +101,33 @@ module.exports.grabAct = (req, res) => {
     res.status(500).send(`Error in grabAct: ${errorMessage}`);
   }
 };
+module.exports.TgrabAct = (req, res) => {
+  try {
+    console.log('All grabAct');
+
+    mqttClient.publish(`esp32/Teacher/control/grab-act`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in grabAct: ${errorMessage}`);
+  }
+};
 
 module.exports.resetArm = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
     // console.log('resetArm, macAddress: ', macAddress);
+
+    mqttClient.publish(`esp32/${macAddress}/control/reset-arm`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in resetArm: ${errorMessage}`);
+  }
+};
+module.exports.TresetArm = (req, res) => {
+  try {
+    console.log('All resetArm');
 
     mqttClient.publish(`esp32/${macAddress}/control/reset-arm`, '');
     res.status(204).send();
