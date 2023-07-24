@@ -5,7 +5,7 @@ const { mqttClient, subscribedTopics, getCurrentAngles, getCurrentEsp32Status } 
 module.exports.resetWifi = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('Reset Wifi, macAddress: ', macAddress);
+    // console.log('Reset Wifi, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/reset-wifi`, '');
     res.status(204).send();
@@ -19,7 +19,7 @@ module.exports.setAxisAngle = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
     const angles = req.body.targetAngles;
-    console.log(`set angles to ${angles}, macAddress: ${macAddress}`);
+    // console.log(`set angles to ${angles}, macAddress: ${macAddress}`);
 
     mqttClient.publish(`esp32/${macAddress}/control/set-axis-angle`, JSON.stringify(angles));
     res.status(204).send();
@@ -32,7 +32,7 @@ module.exports.setAxisAngle = (req, res) => {
 module.exports.correctAct = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('correctAct, macAddress: ', macAddress);
+    // console.log('correctAct, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/correct-act`, '');
     res.status(204).send();
@@ -45,7 +45,7 @@ module.exports.correctAct = (req, res) => {
 module.exports.wrongAct = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('wrongAct, macAddress: ', macAddress);
+    // console.log('wrongAct, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/wrong-act`, '');
     res.status(204).send();
@@ -58,7 +58,7 @@ module.exports.wrongAct = (req, res) => {
 module.exports.grabAct = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('grabAct, macAddress: ', macAddress);
+    // console.log('grabAct, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/grab-act`, '');
     res.status(204).send();
@@ -71,7 +71,7 @@ module.exports.grabAct = (req, res) => {
 module.exports.resetArm = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('resetArm, macAddress: ', macAddress);
+    // console.log('resetArm, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/reset-arm`, '');
     res.status(204).send();
@@ -86,7 +86,7 @@ module.exports.resetArm = (req, res) => {
 module.exports.unsubscribeTopic = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    console.log('unsubscribeTopic, macAddress: ', macAddress);
+    // console.log('unsubscribeTopic, macAddress: ', macAddress);
 
     const anglesTopic = `esp32/${macAddress}/angles`;
     const statusTopic = `esp32/${macAddress}/esp32Status`;
