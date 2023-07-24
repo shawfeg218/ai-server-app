@@ -31,7 +31,7 @@ module.exports.setAxisAngle = (req, res) => {
 module.exports.TsetAxisAngle = (req, res) => {
   try {
     const angles = req.body.targetAngles;
-    console.log(`set all to ${angles}`);
+    // console.log(`set all to ${angles}`);
 
     mqttClient.publish(`esp32/Teacher/control/set-axis-angle`, JSON.stringify(angles));
     res.status(204).send();
