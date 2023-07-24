@@ -48,6 +48,11 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('unlock_page_student');
   });
 
+  socket.on('set_controlMode', (mode) => {
+    console.log('set_controlMode event received with controlMode:', mode);
+    socket.broadcast.emit('set_controlMode_student', mode);
+  });
+
   socket.on('disconnect', () => {
     clientsCount--;
     console.log('Number of clients connected: ', clientsCount);
