@@ -129,7 +129,7 @@ module.exports.TresetArm = (req, res) => {
   try {
     console.log('All resetArm');
 
-    mqttClient.publish(`esp32/${macAddress}/control/reset-arm`, '');
+    mqttClient.publish(`esp32/Teacher/control/reset-arm`, '');
     res.status(204).send();
   } catch (error) {
     let errorMessage = error.message ? error.message : 'An unknown error occurred';
