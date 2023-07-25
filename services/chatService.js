@@ -27,7 +27,6 @@ exports.speechToText = async (audioFile) => {
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
         Authorization: `Bearer ${apiKey}`,
       },
       body: formData,
