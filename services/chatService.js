@@ -29,7 +29,7 @@ exports.speechToText = async (audioPath) => {
     } else {
       throw {
         name: 'UnknownError',
-        message,
+        message: error.message,
       };
     }
   }
