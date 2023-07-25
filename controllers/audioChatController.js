@@ -29,23 +29,14 @@ exports.audioChat = async (req, res) => {
 };
 
 exports.transcriptAudio = async (req, res) => {
-  const audioPath = req.file.path;
+  const audioFile = req.file;
   try {
-    const transcript = await chatService.speechToText(audioPath);
+    const transcript = await chatService.speechToText(audioFile);
     console.log('Transcript completed!');
 
     const data = {
       text: transcript,
     };
-
-    // Delete the audio file after transcription
-    fs.unlink(audioPath, (err) => {
-      if (err) {
-        console.error(`Error deleting file ${audioPath}:`, err);
-      } else {
-        console.log(`File ${audioPath} deleted successfully.`);
-      }
-    });
 
     res.json(data);
   } catch (error) {

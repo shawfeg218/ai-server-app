@@ -4,13 +4,14 @@ const router = express.Router();
 const videoController = require('../controllers/videoController');
 const audioChatController = require('../controllers/audioChatController');
 const esp32Function = require('../mqtt/esp32Function');
-const upload = require('../utils/multerConfig');
+const multer = require('multer');
+const upload = multer();
 
 router.post('/video-translate', videoController.translateVideo);
 
 router.post('/content-learning', videoController.contentLearning);
 
-router.post('/transcript-audio', upload.single('audio'), audioChatController.transcriptAudio);
+router.post('/transcript-audio', upload.single('file'), audioChatController.transcriptAudio);
 
 router.post('/audio-chat', audioChatController.audioChat);
 

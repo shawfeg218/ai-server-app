@@ -1,37 +1,51 @@
 // file: services\chatService.js
 
 const { OpenAIApi, Configuration } = require('openai');
-const fs = require('fs');
+const FormData = require('form-data');
+const fetch = require('node-fetch');
+const { Readable } = require('stream');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speechClient = new textToSpeech.TextToSpeechClient({
   keyFilename: './meme-bot-391406-47b18ce0fb21.json',
 });
 const openaiKey = process.env.OPENAI_API_KEY;
 
-exports.speechToText = async (audioPath) => {
+const bufferToStream = (buffer) => {
+  return Readable.from(buffer);
+};
+
+exports.speechToText = async (audioFile) => {
   try {
-    const configuration = new Configuration({ apiKey: openaiKey });
-    const openai = new OpenAIApi(configuration);
-    const response = await openai.createTranscription({
-      file: fs.createReadStream(audioPath),
-      model: 'whisper-1',
+    const formData = new FormData();
+    const audioStream = bufferToStream(audioFile.buffer);
+    formData.append('file', audioStream, {
+      filename: 'audio.mp3',
+      contentType: audioFile.mimetype,
+    });
+    formData.append('model', 'whisper-1');
+    formData.append('response_format', 'json');
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: formData,
     });
 
-    const { text } = response.json();
-    console.log('Text: ', text);
-    return text;
-  } catch (error) {
-    if (error.response) {
+    if (!response.ok) {
+      const { error } = await response.json();
       throw {
-        name: 'APIError',
-        message: error.response.data.error.message,
-      };
-    } else {
-      throw {
-        name: 'UnknownError',
-        message: error.message,
+        name: 'Whisper APIError',
+        message: error?.message || 'Unknown error',
       };
     }
+
+    const responseText = await response.text();
+    return responseText;
+  } catch (error) {
+    // console.error('Error in transcribeVideo:', error);
+    throw error;
   }
 };
 
