@@ -1,11 +1,39 @@
-// file: services\audioChatService.js
+// file: services\chatService.js
 
 const { OpenAIApi, Configuration } = require('openai');
+const fs = require('fs');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speechClient = new textToSpeech.TextToSpeechClient({
   keyFilename: './meme-bot-391406-47b18ce0fb21.json',
 });
 const openaiKey = process.env.OPENAI_API_KEY;
+
+exports.speechToText = async (audioPath) => {
+  try {
+    const configuration = new Configuration({ apiKey: openaiKey });
+    const openai = new OpenAIApi(configuration);
+    const response = await openai.createTranscription({
+      file: fs.createReadStream(audioPath),
+      model: 'whisper-1',
+    });
+
+    const { text } = response.json();
+    console.log('Text: ', text);
+    return text;
+  } catch (error) {
+    if (error.response) {
+      throw {
+        name: 'APIError',
+        message: error.response.data.error.message,
+      };
+    } else {
+      throw {
+        name: 'UnknownError',
+        message,
+      };
+    }
+  }
+};
 
 exports.chat = async (messages) => {
   // console.log(openaiKey);
