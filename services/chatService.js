@@ -40,8 +40,9 @@ exports.speechToText = async (audioFile) => {
         message: error?.message || 'Unknown error',
       };
     }
-
-    const responseText = await response.data.text;
+    const responseJson = await response.json();
+    const responseText = responseJson.text;
+    console.log(responseText);
     return responseText;
   } catch (error) {
     // console.error('Error in transcribeVideo:', error);
