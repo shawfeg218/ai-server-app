@@ -41,7 +41,7 @@ exports.speechToText = async (audioFile) => {
       };
     }
 
-    const responseText = await response.text();
+    const responseText = await response.data.text;
     return responseText;
   } catch (error) {
     // console.error('Error in transcribeVideo:', error);
