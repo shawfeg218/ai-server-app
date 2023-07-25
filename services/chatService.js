@@ -28,7 +28,7 @@ exports.speechToText = async (audioFile) => {
       method: 'POST',
       headers: {
         ...formData.getHeaders(),
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${openaiKey}`,
       },
       body: formData,
     });
