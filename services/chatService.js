@@ -3,12 +3,40 @@
 const { OpenAIApi, Configuration } = require('openai');
 const FormData = require('form-data');
 const fetch = require('node-fetch');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+ffmpeg.setFfmpegPath(ffmpegPath);
 const { Readable } = require('stream');
+const { v4: uuidv4 } = require('uuid');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speechClient = new textToSpeech.TextToSpeechClient({
   keyFilename: './meme-bot-391406-47b18ce0fb21.json',
 });
 const openaiKey = process.env.OPENAI_API_KEY;
+
+function convertAudio(audioStream, uuid) {
+  return new Promise((resolve, reject) => {
+    const tempFile = `temp/tempFile-${uuid}`;
+    const outputFile = `temp/outputFile-${uuid}.mp3`;
+    audioStream.pipe(fs.createWriteStream(tempFile));
+    ffmpeg(tempFile)
+      .outputFormat('mp3')
+      .save(outputFile)
+      .on('end', () => {
+        fs.unlinkSync(tempFile, (err) => {
+          if (err) {
+            console.log('Error in delete temp file');
+          }
+        });
+        resolve(outputFile);
+      })
+      .on('error', () => {
+        console.log('Error in convertAudio');
+        reject();
+      });
+  });
+}
 
 const bufferToStream = (buffer) => {
   return Readable.from(buffer);
@@ -16,11 +44,14 @@ const bufferToStream = (buffer) => {
 
 exports.speechToText = async (audioFile) => {
   try {
-    const formData = new FormData();
     const audioStream = bufferToStream(audioFile.buffer);
-    formData.append('file', audioStream, {
+    const uuid = uuidv4();
+    await convertAudio(audioStream, uuid);
+    const convertedAudioStream = fs.createReadStream(`temp/outputFile-${uuid}.mp3`);
+    const formData = new FormData();
+    formData.append('file', convertedAudioStream, {
       filename: 'audio.mp3',
-      contentType: audioFile.mimetype,
+      contentType: 'audio/mpeg',
     });
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'json');
@@ -31,6 +62,12 @@ exports.speechToText = async (audioFile) => {
         Authorization: `Bearer ${openaiKey}`,
       },
       body: formData,
+    });
+
+    fs.unlink(`temp/outputFile-${uuid}.mp3`, (err) => {
+      if (err) {
+        console.log(`Error in delete outputFile-${uuid}.mp3`);
+      }
     });
 
     if (!response.ok) {

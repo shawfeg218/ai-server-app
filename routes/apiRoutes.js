@@ -7,13 +7,13 @@ const esp32Function = require('../mqtt/esp32Function');
 const multer = require('multer');
 const upload = multer();
 
-router.post('/video-translate', videoController.translateVideo);
-
-router.post('/content-learning', videoController.contentLearning);
-
 router.post('/transcript-audio', upload.single('file'), audioChatController.transcriptAudio);
 
 router.post('/audio-chat', audioChatController.audioChat);
+
+router.post('/video-translate', videoController.translateVideo);
+
+router.post('/content-learning', videoController.contentLearning);
 
 // mqtt
 router.post('/reset-wifi', esp32Function.resetWifi);
