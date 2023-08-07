@@ -1,6 +1,13 @@
 // file: mqtt/esp32Function.js
 
-const { mqttClient, subscribedTopics, getCurrentAngles, getCurrentEsp32Status } = require('./mqtt');
+const {
+  mqttClient,
+  subscribedTopics,
+  currentAnglesMap,
+  currentEsp32StatusMap,
+  getCurrentAngles,
+  getCurrentEsp32Status,
+} = require('./mqtt');
 
 module.exports.resetWifi = (req, res) => {
   try {
@@ -150,11 +157,13 @@ module.exports.unsubscribeTopic = (req, res) => {
     if (subscribedTopics.has(anglesTopic)) {
       mqttClient.unsubscribe(anglesTopic);
       subscribedTopics.delete(anglesTopic);
+      currentAnglesMap.delete(macAddress);
       console.log('unsubscribeTopic: ', anglesTopic);
     }
     if (subscribedTopics.has(statusTopic)) {
       mqttClient.unsubscribe(statusTopic);
       subscribedTopics.delete(statusTopic);
+      currentEsp32StatusMap.delete(macAddress);
       console.log('unsubscribeTopic: ', statusTopic);
     }
 

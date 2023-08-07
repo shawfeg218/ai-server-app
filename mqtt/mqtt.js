@@ -33,6 +33,8 @@ const getCurrentEsp32Status = (macAddress) => currentEsp32StatusMap.get(macAddre
 module.exports = {
   mqttClient,
   subscribedTopics,
+  currentAnglesMap,
+  currentEsp32StatusMap,
   getCurrentAngles,
   getCurrentEsp32Status,
 };
