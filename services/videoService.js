@@ -5,7 +5,9 @@ const ytdl = require('ytdl-core');
 const { OpenAIApi, Configuration } = require('openai');
 const { getContents, delMarks, checkRes } = require('../utils/getContents');
 
-exports.transcribeVideo = async (apiKey, videoUrl) => {
+const apiKey = process.env.OPENAI_API_KEY;
+
+exports.transcribeVideo = async (videoUrl) => {
   try {
     if (!ytdl.validateURL(videoUrl)) {
       throw new Error('Invalid video URL');
@@ -51,13 +53,13 @@ exports.transcribeVideo = async (apiKey, videoUrl) => {
   }
 };
 
-exports.translateTranscription = async (apiKey, transcription) => {
+exports.translateTranscription = async (transcription) => {
   try {
     const prompt =
       "You are a highly skilled translator specializing in subtitle translation. Your task is to translate the subtitle content between the [START] and [END] markers into traditional Chinese. Each subtitle, marked by its own number and separated by line breaks, should be translated individually. Do not combine or merge subtitles. For example, '1\nHello!\n\n2\nHow can I help you?\n\n' should be translated as '1\n你好!\n\n2\n我能如何幫你?\n\n'. It should not be translated as '1\n你好!我能如何幫你?\n\n'. Please retain all the numbers of the subtitles and all the line break symbols, maintaining the original format of the text.";
 
     // const sentencesFor16k = 250;
-    const sentencesOneTime = 55;
+    const sentencesOneTime = 50;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
@@ -166,7 +168,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
   }
 };
 
-exports.contentChat = async (apiKey, content) => {
+exports.contentChat = async (content) => {
   try {
     const prompt =
       '你是一個幫助學習語言的教師。當給你任何語言的內容時，你將會在內容中找出常用的詞語或句型，然後以繁體中文生成教學內容。';
@@ -175,7 +177,7 @@ exports.contentChat = async (apiKey, content) => {
     const openai = new OpenAIApi(configuration);
 
     const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4',
       messages: [
         {
           role: 'system',
@@ -191,7 +193,7 @@ exports.contentChat = async (apiKey, content) => {
     const { data } = response;
     // console.log('Data: ', data);
     // console.log(data.choices[0].message);
-    console.log('gpt-3.5-turbo: ', data.usage);
+    console.log('gpt-4: ', data.usage);
     return data.choices[0].message.content;
   } catch (error) {
     if (error.response) {

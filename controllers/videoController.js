@@ -3,14 +3,14 @@ const videoService = require('../services/videoService');
 const chatService = require('../services/chatService');
 
 exports.translateVideo = async (req, res) => {
-  const apiKey = req.body.apiKey;
+  // const apiKey = req.body.apiKey;
   const videoUrl = req.body.videoUrl;
 
   try {
-    const transcription = await videoService.transcribeVideo(apiKey, videoUrl);
+    const transcription = await videoService.transcribeVideo(videoUrl);
     console.log('Transcription completed!');
 
-    const translation = await videoService.translateTranscription(apiKey, transcription);
+    const translation = await videoService.translateTranscription(transcription);
     console.log('Translation completed!');
 
     const data = {
@@ -31,11 +31,11 @@ exports.translateVideo = async (req, res) => {
 };
 
 exports.contentLearning = async (req, res) => {
-  const apiKey = req.body.apiKey;
+  // const apiKey = req.body.apiKey;
   const content = req.body.content;
 
   try {
-    const answer = await videoService.contentChat(apiKey, content);
+    const answer = await videoService.contentChat(content);
     console.log('Answer completed!');
 
     const answerAudio = await chatService.textToSpeech(answer);
