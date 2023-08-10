@@ -57,7 +57,7 @@ exports.translateTranscription = async (apiKey, transcription) => {
       "You are a highly skilled translator specializing in subtitle translation. Your task is to translate the subtitle content between the [START] and [END] markers into traditional Chinese. Each subtitle, marked by its own number and separated by line breaks, should be translated individually. Do not combine or merge subtitles. For example, '1\nHello!\n\n2\nHow can I help you?\n\n' should be translated as '1\n你好!\n\n2\n我能如何幫你?\n\n'. It should not be translated as '1\n你好!我能如何幫你?\n\n'. Please retain all the numbers of the subtitles and all the line break symbols, maintaining the original format of the text.";
 
     // const sentencesFor16k = 250;
-    const sentencesOneTime = 60;
+    const sentencesOneTime = 75;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
