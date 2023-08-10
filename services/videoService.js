@@ -5,7 +5,7 @@ const ytdl = require('ytdl-core');
 const { OpenAIApi, Configuration } = require('openai');
 const { getContents, delMarks, checkRes } = require('../utils/getContents');
 
-const apiKey = process.env.OPENAI_API_KEY;
+const openaiKey = process.env.OPENAI_API_KEY;
 
 exports.transcribeVideo = async (videoUrl) => {
   try {
@@ -32,7 +32,7 @@ exports.transcribeVideo = async (videoUrl) => {
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${openaiKey}`,
       },
       body: formData,
     });
@@ -62,7 +62,7 @@ exports.translateTranscription = async (transcription) => {
     const sentencesOneTime = 50;
     let result = '';
 
-    const configuration = new Configuration({ apiKey: apiKey });
+    const configuration = new Configuration({ apiKey: openaiKey });
     const openai = new OpenAIApi(configuration);
 
     // if (transcription.length > 1850) {
@@ -173,7 +173,7 @@ exports.contentChat = async (content) => {
     const prompt =
       '你是一個幫助學習語言的教師。當給你任何語言的內容時，你將會在內容中找出常用的詞語或句型，然後以繁體中文生成教學內容。';
 
-    const configuration = new Configuration({ apiKey: apiKey });
+    const configuration = new Configuration({ apiKey: openaiKey });
     const openai = new OpenAIApi(configuration);
 
     const response = await openai.createChatCompletion({
