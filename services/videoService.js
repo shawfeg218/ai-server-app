@@ -56,13 +56,15 @@ exports.translateTranscription = async (apiKey, transcription) => {
     const prompt =
       "You are a highly skilled translator specializing in subtitle translation. Your task is to translate the subtitle content between the [START] and [END] markers into traditional Chinese. Each subtitle, marked by its own number and separated by line breaks, should be translated individually. Do not combine or merge subtitles. For example, '1\nHello!\n\n2\nHow can I help you?\n\n' should be translated as '1\n你好!\n\n2\n我能如何幫你?\n\n'. It should not be translated as '1\n你好!我能如何幫你?\n\n'. Please retain all the numbers of the subtitles and all the line break symbols, maintaining the original format of the text.";
 
-    const sentencesFor16k = 250;
+    // const sentencesFor16k = 250;
+    const sentencesOneTime = 190;
     let result = '';
 
     const configuration = new Configuration({ apiKey: apiKey });
     const openai = new OpenAIApi(configuration);
 
-    if (transcription.length > 1850) {
+    // if (transcription.length > 1850) {
+    if (transcription.length > 3800) {
       const transcriptionArray = getContents(transcription);
       const contentArray = [];
       let item = '';
@@ -72,7 +74,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
         item += transcriptionArray[i];
         index++;
 
-        if (index === sentencesFor16k) {
+        // if (index === sentencesFor16k) {
+        if (index === sentencesOneTime) {
           contentArray.push(item);
           item = '';
           index = 0;
@@ -85,7 +88,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
 
       for (let item of contentArray) {
         const response = await openai.createChatCompletion({
-          model: 'gpt-3.5-turbo-16k',
+          // model: 'gpt-3.5-turbo-16k',
+          model: 'gpt-4',
           messages: [
             {
               role: 'system',
@@ -101,7 +105,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
         // console.log('Data: ', data);
         // console.log(data.choices[0].message);
 
-        console.log('gpt-3.5-turbo-16k', data.usage);
+        // console.log('gpt-3.5-turbo-16k', data.usage);
+        console.log('gpt-4 separated: ', data.usage);
 
         let contentDM = delMarks(data.choices[0].message.content);
 
@@ -120,7 +125,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
       }
 
       const response = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+        // model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -137,7 +143,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
       // console.log('Data: ', data);
       // console.log(data.choices[0].message);
 
-      console.log('gpt-3.5-turbo: ', data.usage);
+      // console.log('gpt-3.5-turbo: ', data.usage);
+      console.log('gpt-4 one time: ', data.usage);
 
       const contentDM = delMarks(data.choices[0].message.content);
       result += contentDM;
