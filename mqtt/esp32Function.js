@@ -144,6 +144,30 @@ module.exports.TresetArm = (req, res) => {
   }
 };
 
+module.exports.speakAct = (req, res) => {
+  try {
+    const macAddress = req.body.connectedMacAddress;
+    console.log('speakAct, macAddress: ', macAddress);
+
+    mqttClient.publish(`esp32/${macAddress}/control/speak-act`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in speakAct: ${errorMessage}`);
+  }
+};
+module.exports.TspeakAct = (req, res) => {
+  try {
+    console.log('All speakAct');
+
+    mqttClient.publish(`esp32/Teacher/control/speak-act`, '');
+    res.status(204).send();
+  } catch (error) {
+    let errorMessage = error.message ? error.message : 'An unknown error occurred';
+    res.status(500).send(`Error in TspeakAct: ${errorMessage}`);
+  }
+};
+
 // -- get eap32 -- //
 
 module.exports.unsubscribeTopic = (req, res) => {

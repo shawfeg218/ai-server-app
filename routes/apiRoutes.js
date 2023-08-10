@@ -33,6 +33,9 @@ router.post('/T-grab-act', esp32Function.TgrabAct);
 router.post('/reset-arm', esp32Function.resetArm);
 router.post('/T-reset-arm', esp32Function.TresetArm);
 
+router.post('/speak-act', esp32Function.speakAct);
+router.post('/T-speak-act', esp32Function.TspeakAct);
+
 router.post('/unsubscribe-topic', esp32Function.unsubscribeTopic);
 router.post('/get-angles', esp32Function.getAngles);
 router.post('/get-esp32Status', esp32Function.getEsp32Status);
