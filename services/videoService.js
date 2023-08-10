@@ -102,8 +102,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
           ],
         });
         const { data } = response;
-        // console.log('Data: ', data);
-        // console.log(data.choices[0].message);
+        console.log('Data: ', data);
+        console.log(data.choices[0].message);
 
         // console.log('gpt-3.5-turbo-16k', data.usage);
         console.log('gpt-4 separated: ', data.usage);
@@ -140,8 +140,8 @@ exports.translateTranscription = async (apiKey, transcription) => {
       });
 
       const { data } = response;
-      // console.log('Data: ', data);
-      // console.log(data.choices[0].message);
+      console.log('Data: ', data);
+      console.log(data.choices[0].message);
 
       // console.log('gpt-3.5-turbo: ', data.usage);
       console.log('gpt-4 one time: ', data.usage);
