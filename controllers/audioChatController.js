@@ -24,10 +24,11 @@ exports.transcriptAudio = async (req, res) => {
 };
 
 exports.audioChat = async (req, res) => {
+  const prompt = req.body.prompt;
   const messages = req.body.messages;
 
   try {
-    const answer = await chatService.chat(messages);
+    const answer = await chatService.chat(prompt, messages);
     console.log('Answer completed!');
 
     const answerAudio = await chatService.textToSpeech(answer);

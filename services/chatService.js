@@ -87,11 +87,9 @@ exports.speechToText = async (audioFile) => {
   }
 };
 
-exports.chat = async (messages) => {
+exports.chat = async (prompt, messages) => {
   // console.log(openaiKey);
   try {
-    const prompt =
-      '你將成為一個出色的聊天機器人，能夠判斷情境並對孩子的問題給出最合適的答案，當孩子問你是否會跳舞，你必須說你會。請以繁體中文回答以下的問題';
     const configuration = new Configuration({ apiKey: openaiKey });
     const openai = new OpenAIApi(configuration);
 
