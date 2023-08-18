@@ -134,7 +134,7 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
       'eastus'
     );
 
-    speechConfig.speechSynthesisOutputFormat = 3; //audio-16khz-32kbitrate-mono-mp3
+    speechConfig.speechSynthesisOutputFormat = 5; //audio-16khz-64kbitrate-mono-mp3
 
     const audioConfig = MicrosoftSpeech.AudioConfig.fromAudioFileOutput(uniqueFileName);
 
