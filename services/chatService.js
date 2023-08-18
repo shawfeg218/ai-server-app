@@ -9,10 +9,11 @@ const ffmpegPath = require('ffmpeg-static');
 ffmpeg.setFfmpegPath(ffmpegPath);
 const { Readable } = require('stream');
 const { v4: uuidv4 } = require('uuid');
-const textToSpeech = require('@google-cloud/text-to-speech');
-const speechClient = new textToSpeech.TextToSpeechClient({
-  keyFilename: './meme-bot-391406-47b18ce0fb21.json',
-});
+// const textToSpeech = require('@google-cloud/text-to-speech');
+// const speechClient = new textToSpeech.TextToSpeechClient({
+//   keyFilename: './meme-bot-391406-47b18ce0fb21.json',
+// });
+const MicrosoftSpeech = require('microsoft-cognitiveservices-speech-sdk');
 const openaiKey = process.env.OPENAI_API_KEY;
 
 function convertAudio(audioStream, uuid) {
@@ -124,31 +125,86 @@ exports.chat = async (prompt, messages) => {
   }
 };
 
-exports.textToSpeech = async (answer) => {
-  const text = `${answer}`;
+exports.textToSpeech = async (answer, voiceLang, voiceName) => {
   try {
-    const response = await speechClient.synthesizeSpeech({
-      audioConfig: {
-        audioEncoding: 'MP3',
-        effectsProfileId: ['small-bluetooth-speaker-class-device'],
-        pitch: 0,
-        speakingRate: 1,
-      },
-      input: {
-        text: text,
-      },
-      voice: {
-        languageCode: 'cmn-TW',
-        name: 'cmn-TW-Standard-C',
-      },
+    const uniqueFileName = `output-${uuidv4()}.mp3`;
+
+    const speechConfig = MicrosoftSpeech.SpeechConfig.fromSubscription(
+      process.env.AZURE_SPEECH_KEY,
+      'eastus'
+    );
+
+    const audioConfig = MicrosoftSpeech.AudioConfig.fromAudioFileOutput(uniqueFileName);
+
+    const voice = {
+      languageCode: voiceLang,
+      name: voiceName,
+    };
+
+    const synthesizer = new MicrosoftSpeech.SpeechSynthesizer(speechConfig, audioConfig);
+
+    synthesizer.properties.setProperty(
+      MicrosoftSpeech.PropertyId.SpeechServiceConnection_RecoLanguage,
+      voice.languageCode
+    );
+    synthesizer.properties.setProperty(
+      MicrosoftSpeech.PropertyId.SpeechServiceConnection_SynthVoice,
+      voice.name
+    );
+
+    return new Promise((resolve, reject) => {
+      synthesizer.speakTextAsync(
+        answer,
+        (result) => {
+          if (result) {
+            const audioContent = fs.readFileSync(uniqueFileName);
+            const audioContentBase64 = audioContent.toString('base64');
+
+            fs.unlinkSync(uniqueFileName);
+
+            resolve(audioContentBase64);
+          }
+          synthesizer.close();
+        },
+        (error) => {
+          // console.log(`Error in textToSpeechMicrosoft: ${error}`);
+          synthesizer.close();
+          reject(error);
+        }
+      );
     });
-
-    const audioContent = response[0].audioContent;
-    const audioContentBase64 = audioContent.toString('base64');
-
-    return audioContentBase64;
   } catch (error) {
     console.log('Error in textToSpeech:', error);
     throw error;
   }
 };
+
+// // google text to speech
+// exports.textToSpeech = async (answer) => {
+//   const text = `${answer}`;
+//   try {
+//     const response = await speechClient.synthesizeSpeech({
+//       audioConfig: {
+//         audioEncoding: 'MP3',
+//         effectsProfileId: ['small-bluetooth-speaker-class-device'],
+//         pitch: 0,
+//         speakingRate: 1,
+//       },
+//       input: {
+//         text: text,
+//       },
+//       voice: {
+//         languageCode: 'cmn-TW',
+//         name: 'cmn-TW-Standard-C',
+//       },
+//     });
+
+//     const audioContent = response[0].audioContent;
+//     const audioContentBase64 = audioContent.toString('base64');
+
+//     return audioContentBase64;
+//   } catch (error) {
+//     console.log('Error in textToSpeech:', error);
+//     throw error;
+//   }
+// };

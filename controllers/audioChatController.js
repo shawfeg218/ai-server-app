@@ -27,11 +27,14 @@ exports.audioChat = async (req, res) => {
   const prompt = req.body.prompt;
   const messages = req.body.messages;
 
+  const voiceLang = req.body.voiceLang;
+  const voiceName = req.body.voiceName;
+
   try {
     const answer = await chatService.chat(prompt, messages);
     console.log('Answer completed!');
 
-    const answerAudio = await chatService.textToSpeech(answer);
+    const answerAudio = await chatService.textToSpeech(answer, voiceLang, voiceName);
     console.log('Answer audio completed!');
 
     const data = {
