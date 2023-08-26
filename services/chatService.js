@@ -149,7 +149,8 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
         (result) => {
           if (result) {
             const audioContent = fs.readFileSync(uniqueFileName);
-            const audioContentBase64 = audioContent.toString('base64');
+
+            const audioContentBase64 = Buffer.from(audioContent).toString('base64');
 
             resolve(audioContentBase64);
           }
