@@ -141,21 +141,7 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
 
     var audioConfig = MicrosoftSpeech.AudioConfig.fromAudioFileOutput(uniqueFileName);
 
-    // const voice = {
-    //   languageCode: voiceLang,
-    //   name: voiceName,
-    // };
-
     var synthesizer = new MicrosoftSpeech.SpeechSynthesizer(speechConfig, audioConfig);
-
-    // synthesizer.properties.setProperty(
-    //   MicrosoftSpeech.PropertyId.SpeechServiceConnection_RecoLanguage,
-    //   voice.languageCode
-    // );
-    // synthesizer.properties.setProperty(
-    //   MicrosoftSpeech.PropertyId.SpeechServiceConnection_SynthVoice,
-    //   voice.name
-    // );
 
     return new Promise((resolve, reject) => {
       synthesizer.speakTextAsync(
@@ -165,7 +151,7 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
             const audioContent = fs.readFileSync(uniqueFileName);
             const audioContentBase64 = audioContent.toString('base64');
 
-            fs.unlinkSync(uniqueFileName);
+            // fs.unlinkSync(uniqueFileName);
 
             resolve(audioContentBase64);
           }
