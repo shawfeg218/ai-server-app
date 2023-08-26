@@ -129,30 +129,33 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
   try {
     const uniqueFileName = `output-${uuidv4()}.mp3`;
 
-    const speechConfig = MicrosoftSpeech.SpeechConfig.fromSubscription(
+    var speechConfig = MicrosoftSpeech.SpeechConfig.fromSubscription(
       process.env.AZURE_SPEECH_KEY,
       'eastus'
     );
 
-    speechConfig.speechSynthesisOutputFormat = 5; //audio-16khz-64kbitrate-mono-mp3
+    speechConfig.speechSynthesisLanguage = voiceLang;
+    speechConfig.speechSynthesisVoiceName = voiceName;
+    speechConfig.speechSynthesisOutputFormat =
+      MicrosoftSpeech.SpeechSynthesisOutputFormat.Audio16Khz64KBitRateMonoMp3;
 
-    const audioConfig = MicrosoftSpeech.AudioConfig.fromAudioFileOutput(uniqueFileName);
+    var audioConfig = MicrosoftSpeech.AudioConfig.fromAudioFileOutput(uniqueFileName);
 
-    const voice = {
-      languageCode: voiceLang,
-      name: voiceName,
-    };
+    // const voice = {
+    //   languageCode: voiceLang,
+    //   name: voiceName,
+    // };
 
-    const synthesizer = new MicrosoftSpeech.SpeechSynthesizer(speechConfig, audioConfig);
+    var synthesizer = new MicrosoftSpeech.SpeechSynthesizer(speechConfig, audioConfig);
 
-    synthesizer.properties.setProperty(
-      MicrosoftSpeech.PropertyId.SpeechServiceConnection_RecoLanguage,
-      voice.languageCode
-    );
-    synthesizer.properties.setProperty(
-      MicrosoftSpeech.PropertyId.SpeechServiceConnection_SynthVoice,
-      voice.name
-    );
+    // synthesizer.properties.setProperty(
+    //   MicrosoftSpeech.PropertyId.SpeechServiceConnection_RecoLanguage,
+    //   voice.languageCode
+    // );
+    // synthesizer.properties.setProperty(
+    //   MicrosoftSpeech.PropertyId.SpeechServiceConnection_SynthVoice,
+    //   voice.name
+    // );
 
     return new Promise((resolve, reject) => {
       synthesizer.speakTextAsync(
