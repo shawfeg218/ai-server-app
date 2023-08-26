@@ -148,14 +148,18 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
         answer,
         (result) => {
           if (result) {
-            const audioContent = fs.readFileSync(uniqueFileName);
-
-            const audioContentBase64 = Buffer.from(audioContent).toString('base64');
-
-            resolve(audioContentBase64);
+            try {
+              const audioContent = fs.readFileSync(uniqueFileName);
+              const audioContentBase64 = Buffer.from(audioContent).toString('base64');
+              resolve(audioContentBase64);
+            } catch (err) {
+              console.error('Error reading or converting file:', err);
+              reject(err);
+            } finally {
+              fs.unlinkSync(uniqueFileName);
+            }
           }
           synthesizer.close();
-          fs.unlinkSync(uniqueFileName);
         },
         (error) => {
           // console.log(`Error in textToSpeechMicrosoft: ${error}`);
