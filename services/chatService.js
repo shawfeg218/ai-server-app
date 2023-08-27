@@ -143,31 +143,24 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
 
     var synthesizer = new MicrosoftSpeech.SpeechSynthesizer(speechConfig, audioConfig);
 
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       synthesizer.speakTextAsync(
         text,
         (result) => {
-          if (result) {
-            try {
-              const audioContent = fs.readFileSync(uniqueFileName);
-              const audioContentBase64 = Buffer.from(audioContent).toString('base64');
-              resolve(audioContentBase64);
-            } catch (err) {
-              console.error('Error reading or converting file:', err);
-              reject(err);
-            } finally {
-              fs.unlinkSync(uniqueFileName);
-            }
-          }
           synthesizer.close();
+          resolve(result);
         },
         (error) => {
-          // console.log(`Error in textToSpeechMicrosoft: ${error}`);
           synthesizer.close();
           reject(error);
         }
       );
     });
+
+    const audioContent = fs.readFileSync(uniqueFileName);
+    const audioContentBase64 = Buffer.from(audioContent).toString('base64');
+    fs.unlinkSync(uniqueFileName);
+    return audioContentBase64;
   } catch (error) {
     console.log('Error in textToSpeech:', error);
     throw error;
