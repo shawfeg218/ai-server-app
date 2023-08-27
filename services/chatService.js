@@ -156,6 +156,21 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
       );
     });
 
+    // check if file has been finished writing by checking the file size
+    let isFinished = false;
+    let prevSize = fs.statSync(uniqueFileName).size;
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    let currentSize = fs.statSync(uniqueFileName).size;
+
+    while (isFinished === false) {
+      if (currentSize === prevSize) {
+        isFinished = true;
+      }
+      prevSize = currentSize;
+      currentSize = fs.statSync(uniqueFileName).size;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
     const audioContent = fs.readFileSync(uniqueFileName);
     const audioContentBase64 = Buffer.from(audioContent).toString('base64');
     return audioContentBase64;
