@@ -125,7 +125,7 @@ exports.chat = async (prompt, messages) => {
   }
 };
 
-exports.textToSpeech = async (answer, voiceLang, voiceName) => {
+exports.textToSpeech = async (text, voiceLang, voiceName) => {
   try {
     const uniqueFileName = `output-${uuidv4()}.mp3`;
 
@@ -145,7 +145,7 @@ exports.textToSpeech = async (answer, voiceLang, voiceName) => {
 
     return new Promise((resolve, reject) => {
       synthesizer.speakTextAsync(
-        answer,
+        text,
         (result) => {
           if (result) {
             try {

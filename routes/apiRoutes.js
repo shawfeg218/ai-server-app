@@ -11,6 +11,8 @@ router.post('/transcript-audio', upload.single('file'), audioChatController.tran
 
 router.post('/audio-chat', audioChatController.audioChat);
 
+router.post('/tts', audioChatController.tts);
+
 router.post('/video-translate', videoController.translateVideo);
 
 router.post('/content-learning', videoController.contentLearning);

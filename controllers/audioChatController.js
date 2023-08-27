@@ -53,3 +53,28 @@ exports.audioChat = async (req, res) => {
     res.status(500).json(errorResponse);
   }
 };
+
+exports.tts = async (req, res) => {
+  const text = req.body.text;
+  const voiceLang = req.body.voiceLang;
+  const voiceName = req.body.voiceName;
+
+  try {
+    const audioBase64 = await chatService.textToSpeech(text, voiceLang, voiceName);
+    console.log('Answer audio completed!');
+
+    const data = {
+      audioBase64: audioBase64,
+    };
+
+    res.json(data);
+  } catch (error) {
+    // console.log(error);
+    const errorResponse = {
+      name: error.name,
+      message: error.message,
+    };
+
+    res.status(500).json(errorResponse);
+  }
+};
