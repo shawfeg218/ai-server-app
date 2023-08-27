@@ -126,9 +126,8 @@ exports.chat = async (prompt, messages) => {
 };
 
 exports.textToSpeech = async (text, voiceLang, voiceName) => {
+  const uniqueFileName = `output-${uuidv4()}.mp3`;
   try {
-    const uniqueFileName = `output-${uuidv4()}.mp3`;
-
     var speechConfig = MicrosoftSpeech.SpeechConfig.fromSubscription(
       process.env.AZURE_SPEECH_KEY,
       'eastus'
@@ -159,11 +158,14 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
 
     const audioContent = fs.readFileSync(uniqueFileName);
     const audioContentBase64 = Buffer.from(audioContent).toString('base64');
-    fs.unlinkSync(uniqueFileName);
     return audioContentBase64;
   } catch (error) {
     console.log('Error in textToSpeech:', error);
     throw error;
+  } finally {
+    if (fs.existsSync(uniqueFileName)) {
+      fs.unlinkSync(uniqueFileName);
+    }
   }
 };
 
