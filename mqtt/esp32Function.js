@@ -12,7 +12,7 @@ const {
 module.exports.resetWifi = (req, res) => {
   try {
     const macAddress = req.body.connectedMacAddress;
-    // console.log('Reset Wifi, macAddress: ', macAddress);
+    console.log('Reset Wifi, macAddress: ', macAddress);
 
     mqttClient.publish(`esp32/${macAddress}/control/reset-wifi`, '');
     res.status(204).send();
