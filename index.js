@@ -53,10 +53,17 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('set_controlMode_student', mode);
   });
 
+  socket.on('teacher_mood', (mood) => {
+    console.log('teacher_mood event received with mood: ', mood);
+    socket.broadcast.emit('set_mood_student', mood);
+  });
+
   socket.on('disconnect', () => {
     clientsCount--;
     console.log('Number of clients connected: ', clientsCount);
   });
+
+
 });
 
 server.listen(443, () => {

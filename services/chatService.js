@@ -95,7 +95,8 @@ exports.chat = async (prompt, messages) => {
     const openai = new OpenAIApi(configuration);
 
     const response = await openai.createChatCompletion({
-      model: 'gpt-4',
+     // model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
