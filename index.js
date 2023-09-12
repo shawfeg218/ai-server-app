@@ -17,8 +17,8 @@ app.use(cors());
 app.use('/api', apiRoutes);
 
 const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/server.shawnweb.site/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/server.shawnweb.site/fullchain.pem'),
+  key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+  cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`),
 };
 
 const server = https.createServer(options, app);
