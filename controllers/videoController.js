@@ -33,12 +33,14 @@ exports.translateVideo = async (req, res) => {
 exports.contentLearning = async (req, res) => {
   // const apiKey = req.body.apiKey;
   const content = req.body.content;
+  const voiceLang = 'zh-TW';
+  const voiceName = 'zh-TW-YunJheNeural';
 
   try {
     const answer = await videoService.contentChat(content);
     console.log('Answer completed!');
 
-    const answerAudio = await chatService.textToSpeech(answer);
+    const answerAudio = await chatService.textToSpeech(answer, voiceLang, voiceName);
     console.log('Answer audio completed!');
 
     const data = {

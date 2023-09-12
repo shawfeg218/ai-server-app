@@ -48,7 +48,7 @@ exports.transcribeVideo = async (videoUrl) => {
     const responseText = await response.text();
     return responseText;
   } catch (error) {
-    // console.error('Error in transcribeVideo:', error);
+    console.log('Error in transcribeVideo:', error);
     throw error;
   }
 };
