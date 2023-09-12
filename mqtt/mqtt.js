@@ -6,7 +6,9 @@ const MQTT_SERVER_IP = 'localhost';
 const MQTT_SERVER_PORT = process.env.MQTT_SERVER_PORT;
 console.log(`mqtt://${MQTT_SERVER_IP}:${MQTT_SERVER_PORT}`);
 
-const mqttClient = mqtt.connect(`mqtt://${MQTT_SERVER_IP}:${MQTT_SERVER_PORT}`);
+const mqttClient = mqtt.connect(`mqtt://${MQTT_SERVER_IP}:${MQTT_SERVER_PORT}`, {
+  clientId: 'memebot_server_1',
+});
 
 mqttClient.on('connect', () => {
   console.log('MQTT client connected');
