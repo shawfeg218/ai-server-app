@@ -55,9 +55,7 @@ exports.transcribeVideo = async (videoUrl) => {
 
 exports.translateTranscription = async (transcription) => {
   try {
-    const prompt =
-      "You are a highly skilled translator specializing in subtitle translation. Your task is to translate the subtitle content between the [START] and [END] markers into traditional Chinese. Each subtitle, marked by its own number and separated by line breaks, should be translated individually. Do not combine or merge subtitles. For example, '1\nHello!\n\n2\nHow can I help you?\n\n' should be translated as '1\n你好!\n\n2\n我能如何幫你?\n\n'. It should not be translated as '1\n你好!我能如何幫你?\n\n'. Please retain all the numbers of the subtitles and all the line break symbols, maintaining the original format of the text.";
-
+    const prompt = "您是一位專門從事字幕翻譯的高級翻譯員。您的任務是將[START]和[END]標記之間的字幕內容翻譯成繁體中文。每個字幕都由其自己的數字標記並且由換行符分隔，應單獨翻譯。請不要合併或合並字幕。例如，'1\nHello!\n\n2\nHow can I help you?\n\n'應該翻譯為'1\n你好!\n\n2\n我能如何幫你?\n\n'。它不應該被翻譯為'1\n你好!我能如何幫你?\n\n'。請保留所有字幕的數字和所有換行符號，保持文本的原始格式。特別注意，即使原文中的某些句子在語義上相關聯，也請保持它們的獨立性，不要將它們合併成一個句子。"
     // const sentencesFor16k = 250;
     const sentencesOneTime = 50;
     let result = '';
