@@ -15,6 +15,8 @@ const { v4: uuidv4 } = require('uuid');
 // });
 const MicrosoftSpeech = require('microsoft-cognitiveservices-speech-sdk');
 const openaiKey = process.env.OPENAI_API_KEY;
+const configuration = new Configuration({ apiKey: openaiKey });
+const openai = new OpenAIApi(configuration);
 
 function convertAudio(audioStream, uuid) {
   return new Promise((resolve, reject) => {
@@ -91,11 +93,8 @@ exports.speechToText = async (audioFile) => {
 exports.chat = async (prompt, messages) => {
   // console.log(openaiKey);
   try {
-    const configuration = new Configuration({ apiKey: openaiKey });
-    const openai = new OpenAIApi(configuration);
-
     const response = await openai.createChatCompletion({
-     // model: 'gpt-4',
+      // model: 'gpt-4',
       model: 'gpt-3.5-turbo',
       messages: [
         {
@@ -181,6 +180,33 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
   } finally {
     if (fs.existsSync(uniqueFileName)) {
       fs.unlinkSync(uniqueFileName);
+    }
+  }
+};
+
+exports.textToImage = async (text) => {
+  try {
+    const response = await openai.createImage({
+      prompt: text,
+      n: 1,
+      size: '256x256',
+    });
+    const resJson = response.json();
+    console.log('data: ', resJson.data);
+    const imgUrl = resJson.data[0].url;
+    console.log('imgUrl: ', imgUrl);
+    return imgUrl;
+  } catch (error) {
+    if (error.response) {
+      throw {
+        name: 'APIError',
+        message: error.response.data.error.message,
+      };
+    } else {
+      throw {
+        name: 'UnknownError',
+        message: error.message,
+      };
     }
   }
 };
