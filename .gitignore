@@ -53,5 +53,5 @@ esp32-webapp-382008-0ad25a0baf41.json
 
 meme-bot-391406-47b18ce0fb21.json
 
-temp/*
-uploads/*
+temp
+uploads
