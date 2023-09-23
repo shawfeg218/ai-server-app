@@ -37,13 +37,9 @@ exports.audioChat = async (req, res) => {
     const answerAudio = await chatService.textToSpeech(answer, voiceLang, voiceName);
     console.log('Answer audio completed!');
 
-    const imgUrl = await chatService.textToImage(answer);
-    console.log('Answer image completed!');
-
     const data = {
       answer: answer,
       answerAudio: answerAudio,
-      imgUrl: imgUrl,
     };
 
     res.json(data);
