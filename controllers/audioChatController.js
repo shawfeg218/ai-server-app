@@ -82,3 +82,26 @@ exports.tts = async (req, res) => {
     res.status(500).json(errorResponse);
   }
 };
+
+exports.tti = async (req, res) => {
+  const prompt = req.body.prompt;
+
+  try {
+    const imgUrl = await chatService.textToImage(prompt);
+    console.log('Answer image completed!');
+
+    const data = {
+      imgUrl: imgUrl,
+    };
+
+    res.json(data);
+  } catch (error) {
+    // console.log(error);
+    const errorResponse = {
+      name: error.name,
+      message: error.message,
+    };
+
+    res.status(500).json(errorResponse);
+  }
+};
