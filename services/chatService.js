@@ -191,16 +191,15 @@ exports.textToImage = async (text) => {
       n: 1,
       size: '256x256',
     });
-    const resJson = response.json();
-    console.log('data: ', resJson.data);
-    const imgUrl = resJson.data[0].url;
-    console.log('imgUrl: ', imgUrl);
+    const imgUrl = response.data.data[0].url;
+    // console.log('imgUrl: ',imgUrl);
     return imgUrl;
   } catch (error) {
+	  console.log('error in ttI: ',error);
     if (error.response) {
       throw {
         name: 'APIError',
-        message: error.response.data.error.message,
+        message: error.response.data,
       };
     } else {
       throw {
