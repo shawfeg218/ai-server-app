@@ -195,6 +195,7 @@ exports.textToImage = async (prompt) => {
         prompt: prompt,
         width: 256,
         height: 256,
+	cfg_scale: 30,
       }),
     });
 
@@ -207,7 +208,7 @@ exports.textToImage = async (prompt) => {
 
     const data = await response.json();
     const imgString = data.images[0];
-    console.log('imgString: ', imgString);
+//    console.log('imgString: ', imgString);
     return imgString;
   } catch (error) {
     console.log('error in ttI: ', error);
