@@ -184,31 +184,66 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
   }
 };
 
-exports.textToImage = async (text) => {
+exports.textToImage = async (prompt) => {
   try {
-    const response = await openai.createImage({
-      prompt: text,
-      n: 1,
-      size: '256x256',
+    const response = await fetch('http://163.13.201.153:7860/sdapi/v1/txt2img', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        width: 256,
+        height: 256,
+      }),
     });
-    const imgUrl = response.data.data[0].url;
-    // console.log('imgUrl: ',imgUrl);
-    return imgUrl;
-  } catch (error) {
-	  console.log('error in ttI: ',error);
-    if (error.response) {
+
+    if (!response.ok) {
       throw {
         name: 'APIError',
-        message: error.response.data,
-      };
-    } else {
-      throw {
-        name: 'UnknownError',
-        message: error.message,
+        message: 'Stable Diffusion API Error',
       };
     }
+
+    const data = await response.json();
+    const imgString = data.images[0];
+    console.log('imgString: ', imgString);
+    return imgString;
+  } catch (error) {
+    console.log('error in ttI: ', error);
+    throw {
+      name: 'Text2imageError',
+      message: error.message,
+    };
   }
 };
+
+// DALL-E image generation
+// exports.textToImage = async (text) => {
+//   try {
+//     const response = await openai.createImage({
+//       prompt: text,
+//       n: 1,
+//       size: '256x256',
+//     });
+//     const imgUrl = response.data.data[0].url;
+//     // console.log('imgUrl: ',imgUrl);
+//     return imgUrl;
+//   } catch (error) {
+//     console.log('error in ttI: ', error);
+//     if (error.response) {
+//       throw {
+//         name: 'APIError',
+//         message: error.response.data,
+//       };
+//     } else {
+//       throw {
+//         name: 'UnknownError',
+//         message: error.message,
+//       };
+//     }
+//   }
+// };
 
 // // google text to speech
 // exports.textToSpeech = async (answer) => {
