@@ -83,12 +83,19 @@ exports.tti = async (req, res) => {
   const prompt = req.body.prompt;
 
   try {
-    const imgUrl = await chatService.textToImage(prompt);
+    const imgString = await chatService.textToImage(prompt);
     console.log('Answer image completed!');
 
     const data = {
-      imgUrl: imgUrl,
+      imgString: imgString,
     };
+
+    // const imgUrl = await chatService.textToImage(prompt);
+    // console.log('Answer image completed!');
+
+    // const data = {
+    //   imgUrl: imgUrl,
+    // };
 
     res.json(data);
   } catch (error) {
