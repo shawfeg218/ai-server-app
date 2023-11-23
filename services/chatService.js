@@ -1,19 +1,19 @@
 // file: services\chatService.js
 
-const { OpenAIApi, Configuration } = require('openai');
-const FormData = require('form-data');
-const fetch = require('node-fetch');
-const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('ffmpeg-static');
+const { OpenAIApi, Configuration } = require("openai");
+const FormData = require("form-data");
+const fetch = require("node-fetch");
+const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
-const { Readable } = require('stream');
-const { v4: uuidv4 } = require('uuid');
+const { Readable } = require("stream");
+const { v4: uuidv4 } = require("uuid");
 // const textToSpeech = require('@google-cloud/text-to-speech');
 // const speechClient = new textToSpeech.TextToSpeechClient({
 //   keyFilename: './meme-bot-391406-47b18ce0fb21.json',
 // });
-const MicrosoftSpeech = require('microsoft-cognitiveservices-speech-sdk');
+const MicrosoftSpeech = require("microsoft-cognitiveservices-speech-sdk");
 const openaiKey = process.env.OPENAI_API_KEY;
 const configuration = new Configuration({ apiKey: openaiKey });
 const openai = new OpenAIApi(configuration);
@@ -24,18 +24,18 @@ function convertAudio(audioStream, uuid) {
     const outputFile = `temp/outputFile-${uuid}.mp3`;
     audioStream.pipe(fs.createWriteStream(tempFile));
     ffmpeg(tempFile)
-      .outputFormat('mp3')
+      .outputFormat("mp3")
       .save(outputFile)
-      .on('end', () => {
+      .on("end", () => {
         fs.unlinkSync(tempFile, (err) => {
           if (err) {
-            console.log('Error in delete temp file');
+            console.log("Error in delete temp file");
           }
         });
         resolve(outputFile);
       })
-      .on('error', () => {
-        console.log('Error in convertAudio');
+      .on("error", () => {
+        console.log("Error in convertAudio");
         reject();
       });
   });
@@ -52,14 +52,14 @@ exports.speechToText = async (audioFile) => {
     await convertAudio(audioStream, uuid);
     const convertedAudioStream = fs.createReadStream(`temp/outputFile-${uuid}.mp3`);
     const formData = new FormData();
-    formData.append('file', convertedAudioStream, {
-      filename: 'audio.mp3',
-      contentType: 'audio/mpeg',
+    formData.append("file", convertedAudioStream, {
+      filename: "audio.mp3",
+      contentType: "audio/mpeg",
     });
-    formData.append('model', 'whisper-1');
-    formData.append('response_format', 'json');
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
+    formData.append("model", "whisper-1");
+    formData.append("response_format", "json");
+    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
       headers: {
         ...formData.getHeaders(),
         Authorization: `Bearer ${openaiKey}`,
@@ -76,8 +76,8 @@ exports.speechToText = async (audioFile) => {
     if (!response.ok) {
       const { error } = await response.json();
       throw {
-        name: 'Whisper APIError',
-        message: error?.message || 'Unknown error',
+        name: "Whisper APIError",
+        message: error?.message || "Unknown error",
       };
     }
     const responseJson = await response.json();
@@ -95,10 +95,10 @@ exports.chat = async (prompt, messages) => {
   try {
     const response = await openai.createChatCompletion({
       // model: 'gpt-4',
-      model: 'gpt-3.5-turbo',
+      model: "ft:gpt-3.5-turbo-0613:tku-ethci-lab::8NgJXXCJ",
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: prompt,
         },
         ...messages,
@@ -113,12 +113,12 @@ exports.chat = async (prompt, messages) => {
   } catch (error) {
     if (error.response) {
       throw {
-        name: 'APIError',
+        name: "APIError",
         message: error.response.data.error.message,
       };
     } else {
       throw {
-        name: 'UnknownError',
+        name: "UnknownError",
         message: error.message,
       };
     }
@@ -130,7 +130,7 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
   try {
     var speechConfig = MicrosoftSpeech.SpeechConfig.fromSubscription(
       process.env.AZURE_SPEECH_KEY,
-      'eastus'
+      "eastus"
     );
 
     speechConfig.speechSynthesisLanguage = voiceLang;
@@ -172,10 +172,10 @@ exports.textToSpeech = async (text, voiceLang, voiceName) => {
     }
 
     const audioContent = fs.readFileSync(uniqueFileName);
-    const audioContentBase64 = Buffer.from(audioContent).toString('base64');
+    const audioContentBase64 = Buffer.from(audioContent).toString("base64");
     return audioContentBase64;
   } catch (error) {
-    console.log('Error in textToSpeech:', error);
+    console.log("Error in textToSpeech:", error);
     throw error;
   } finally {
     if (fs.existsSync(uniqueFileName)) {
@@ -226,21 +226,21 @@ exports.textToImage = async (text) => {
     const response = await openai.createImage({
       prompt: text,
       n: 1,
-      size: '256x256',
+      size: "256x256",
     });
     const imgUrl = response.data.data[0].url;
     // console.log('imgUrl: ',imgUrl);
     return imgUrl;
   } catch (error) {
-    console.log('error in ttI: ', error);
+    console.log("error in ttI: ", error);
     if (error.response) {
       throw {
-        name: 'APIError',
+        name: "APIError",
         message: error.response.data,
       };
     } else {
       throw {
-        name: 'UnknownError',
+        name: "UnknownError",
         message: error.message,
       };
     }
